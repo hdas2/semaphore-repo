@@ -1,0 +1,25 @@
+---
+- name: Check Apache status and disk space usage
+  hosts: your_target_hosts
+  become: yes
+  tasks:
+
+    - name: Check if Apache is running
+      ansible.builtin.systemd:
+        name: apache2
+        state: started
+      register: apache_status
+      ignore_errors: yes
+
+    - name: Show Apache status
+      debug:
+        msg: "Apache is {{ apache_status.state }}"
+    
+    - name: Get disk space usage for each mount point
+      ansible.builtin.command: df -h
+      register: disk_space
+      changed_when: false
+    
+    - name: Display disk space
+      debug:
+        msg: "{{ disk_space.stdout_lines }}"
