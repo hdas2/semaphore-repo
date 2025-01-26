@@ -1,6 +1,6 @@
 ---
 - name: Check Apache status and disk space usage
-  hosts: your_target_hosts
+  hosts: nodes
   become: yes
   tasks:
 
