@@ -1,0 +1,6 @@
+---
+- name: Ping Servers from Ansible Host
+  host: windows
+  tasks:
+    - name: Ping Servers
+      win_ping:
