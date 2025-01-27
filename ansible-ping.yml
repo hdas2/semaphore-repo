@@ -1,6 +1,6 @@
 ---
-- name: Ping Servers from Ansible Host
-  host: windows
+- name: Test Windows Connection
+  hosts: windows_server
   tasks:
-    - name: Ping Servers
+    - name: Ping Windows Server
       win_ping:
