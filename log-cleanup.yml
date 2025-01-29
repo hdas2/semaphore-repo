@@ -21,5 +21,5 @@
         & $scriptPath
       args:
         executable: powershell
-        chdir: "E:\"
+        chdir: "E:\Logs"
       register: result
