@@ -1,25 +1,21 @@
 ---
-- name: Run PowerShell script as Administrator on Windows
+- name: Delete .txt, .php, and .log files in a given directory on Windows
   hosts: windows
   gather_facts: no
   tasks:
-    - name: Ensure the PowerShell script runs as Administrator
-      win_shell: |
-        $scriptPath = 'E:\log_cleanup.ps1'
+    - name: Remove .txt, .php, and .log files from the directory
+      win_find:
+        paths: "E:\Logs"  # Replace with the actual directory path
+        patterns:
+          - "*.txt"
+          - "*.php"
+          - "*.log"
+        recurse: yes  # Include subdirectories if needed
+      register: files_to_delete
 
-        # Check if we're running as an administrator
-        $isAdmin = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
-        $adminRole = [Security.Principal.WindowsBuiltInRole]::Administrator
-
-        if (-not $isAdmin.IsInRole($adminRole)) {
-            # If not running as admin, restart the script as admin
-            Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File $scriptPath" -Verb RunAs
-            exit
-        }
-
-        # Continue executing the script if running as admin
-        & $scriptPath
-      args:
-        executable: powershell
-        chdir: "E:\Logs"
-      register: result
+    - name: Delete the found files
+      win_file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ files_to_delete.files }}"
+      when: files_to_delete.matched > 0
