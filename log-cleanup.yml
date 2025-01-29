@@ -23,7 +23,3 @@
         executable: powershell
         chdir: "E:\"
       register: result
-
-    - name: Show the result of the PowerShell script execution
-      debug:
-        var: result
