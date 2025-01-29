@@ -1,0 +1,29 @@
+---
+- name: Run PowerShell script as Administrator on Windows
+  hosts: windows
+  gather_facts: no
+  tasks:
+    - name: Ensure the PowerShell script runs as Administrator
+      win_shell: |
+        $scriptPath = 'E:\log_cleanup.ps1'
+
+        # Check if we're running as an administrator
+        $isAdmin = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
+        $adminRole = [Security.Principal.WindowsBuiltInRole]::Administrator
+
+        if (-not $isAdmin.IsInRole($adminRole)) {
+            # If not running as admin, restart the script as admin
+            Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File $scriptPath" -Verb RunAs
+            exit
+        }
+
+        # Continue executing the script if running as admin
+        & $scriptPath
+      args:
+        executable: powershell
+        chdir: "E:\"
+      register: result
+
+    - name: Show the result of the PowerShell script execution
+      debug:
+        var: result
