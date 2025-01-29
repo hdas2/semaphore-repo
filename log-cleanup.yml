@@ -3,9 +3,17 @@
   hosts: windows
   gather_facts: no
   tasks:
+    - name: Ensure directory exists and list files
+      win_command: dir "E:\Logs"
+      register: dir_check
+
+    - name: Debug directory check result
+      debug:
+        var: dir_check
+
     - name: Remove .txt, .php, and .log files from the directory
       win_find:
-        paths: "E:\Logs"  # Replace with the actual directory path
+        paths: "E:\Logs"  # Replace with the correct directory path
         patterns:
           - "*.txt"
           - "*.php"
